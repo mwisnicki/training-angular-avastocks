@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 
+import { StocksService } from '../stocks.service';
+import { Stock } from '../stock';
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -7,9 +10,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class HomeComponent implements OnInit {
 
-  constructor() { }
+  stocks: Stock[];
+
+  constructor(
+    private stockService: StocksService
+  ) { }
 
   ngOnInit(): void {
+    this.stockService.getStocks().subscribe((stocks) => (this.stocks = stocks));
   }
 
 }
