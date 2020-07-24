@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-details',
@@ -7,11 +7,17 @@ import { ActivatedRoute } from '@angular/router';
   styleUrls: ['./details.component.css'],
 })
 export class DetailsComponent implements OnInit {
-  id: string;
+  selectedSymbol: string;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
-    this.id = this.route.snapshot.paramMap.get('id');
+    this.route.paramMap.subscribe((params) => {
+      if (params.get('symbol')) {
+        this.selectedSymbol = params.get('symbol').toUpperCase();
+      } else {
+        this.router.navigateByUrl('details/aapl');
+      }
+    });
   }
 }
