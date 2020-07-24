@@ -3,6 +3,11 @@
 @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
 */
 
+.mock {
+    border: 2px dashed yellow;
+    background: lightyellow;
+}
+
 html,
 body {
     font-family: "Calibri", Arial, sans-serif;

@@ -1,1 +1,44 @@
-<p>follow-stocks works!</p>
+<section class="stock-list mock">
+    <h2 class="stock-list__title">Stocks that I follow <a><span class="stock-list__btn stock-list__btn--add" (click)="followPopup.visible=true">+</span></a></h2>
+    <app-follow-stock-popup #followPopup (added)="onStockAdd($event)"></app-follow-stock-popup>
+    <div class="stock-list__grid">
+        <div class="stock-list__grid-row">
+            <div class="stock-list__grid-cell">
+                <a><span class="stock-list__btn stock-list__btn--remove">&ndash;</span></a>
+            </div>
+            <div class="stock-list__grid-cell">AAPL</div>
+            <div class="stock-list__grid-cell">253.4</div>
+            <div class="stock-list__grid-cell">
+                <a><span class="btn-transaction btn-transaction--buy">buy</span></a>
+            </div>
+            <div class="stock-list__grid-cell">
+                <a><span class="btn-transaction btn-transaction--sell">sell</span></a>
+            </div>
+            <div class="stock-list__grid-cell">35</div>
+        </div>
+        <div class="stock-list__grid-row">
+            <div class="stock-list__grid-cell">
+                <a><span class="stock-list__btn stock-list__btn--remove">&ndash;</span></a>
+            </div>
+            <div class="stock-list__grid-cell">MSFT</div>
+            <div class="stock-list__grid-cell">456</div>
+            <div class="stock-list__grid-cell">
+                <a><span class="btn-transaction btn-transaction--buy">buy</span></a>
+            </div>
+        </div>
+        <div class="stock-list__grid-row">
+            <div class="stock-list__grid-cell">
+                    <a><span class="stock-list__btn stock-list__btn--remove">&ndash;</span></a>
+            </div>
+            <div class="stock-list__grid-cell">GOOG</div>
+            <div class="stock-list__grid-cell">1005.3</div>
+            <div class="stock-list__grid-cell">
+                <a><span class="btn-transaction btn-transaction--buy">buy</span></a>
+            </div>
+            <div class="stock-list__grid-cell">
+                <a><span class="btn-transaction btn-transaction--sell">sell</span></a>
+            </div>
+            <div class="stock-list__grid-cell">12</div>
+        </div>
+    </div>
+</section>

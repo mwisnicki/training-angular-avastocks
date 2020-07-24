@@ -12,4 +12,8 @@ export class FollowStocksComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  onStockAdd(stock) {
+    console.log("stock add", stock);
+  }
+
 }
