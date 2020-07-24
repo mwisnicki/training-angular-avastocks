@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { Stock, StockTick } from 'src/app/stock';
+import { StocksService, WatchlistEntry } from 'src/app/stocks.service';
+import { StockSymbol, Stock } from 'src/app/stock';
 
 @Component({
   selector: 'app-follow-stocks',
@@ -7,24 +8,33 @@ import { Stock, StockTick } from 'src/app/stock';
   styleUrls: ['./follow-stocks.component.css'],
 })
 export class FollowStocksComponent implements OnInit {
-  // TODO replace mock
-  followedStocks: FollowedStock[] = <any>[
-    { stock: { symbol: 'AAPL', lastTick: { price: 253.4 } }, amount: 35 },
-    { stock: { symbol: 'MSFT', lastTick: { price: 456 } }, amount: 0 },
-    { stock: { symbol: 'GOOG', lastTick: { price: 1005.3 } }, amount: 12 },
-  ];
+  watchList: WatchlistEntry[];
+  allocations: { [key: string]: number }; // TODO I don't really like this
 
-  constructor() {}
+  constructor(private stockService: StocksService) {}
 
-  ngOnInit(): void {}
-
-  onStockAdd(stock) {
-    console.log('stock add', stock);
+  ngOnInit(): void {
+    this.stockService.getUserData().subscribe((ud) => {
+      console.log('userData', ud);
+      this.watchList = ud.watchList;
+      this.allocations = ud.allocations.reduce(
+        (acc, x) => ({ ...acc, [x.symbol]: x.amount }),
+        {}
+      );
+      console.log('allocations', this.allocations);
+    });
   }
-}
 
-// TODO simplify this to primitive types?
-export interface FollowedStock {
-  stock: Stock;
-  amount: number;
+  follow(symbol: StockSymbol) {
+    console.log('follow stock', symbol);
+    this.stockService.followStock(symbol).subscribe((ok) => {
+      this.watchList.push({ symbol });
+    });
+  }
+
+  unfollow(symbol: StockSymbol) {
+    this.stockService.unfollowStock(symbol).subscribe((ok) => {
+      this.watchList = this.watchList.filter((w) => w.symbol != symbol);
+    });
+  }
 }
