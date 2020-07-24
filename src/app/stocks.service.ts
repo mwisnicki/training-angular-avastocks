@@ -20,10 +20,7 @@ export class StocksService {
   constructor(private http: HttpClient) { }
 
   getStocks(): Observable<Stock[]> {
-    return this.http.get<Stock[]>(this.apiBaseUrl + '/stocks').pipe(
-      tap((_) => console.log('fetched stocks')),
-      catchError(this.handleError<Stock[]>('getStocks', []))
-    );
+    return this.http.get<Stock[]>(this.apiBaseUrl + '/stocks');
   }
 
   handleError<T>(op, result: T): (any) => Observable<T> {

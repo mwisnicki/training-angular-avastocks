@@ -1,4 +1,4 @@
 <p>home works!</p>
 <ul>
-    <li *ngFor="let stock of stocks">{{stock.symbol}}</li>
+    <li *ngFor="let stock of stocks$ | async">{{stock.symbol}}</li>
 </ul>

@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { StocksService } from '../stocks.service';
 import { Stock } from '../stock';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -11,13 +12,16 @@ import { Stock } from '../stock';
 export class HomeComponent implements OnInit {
 
   stocks: Stock[];
+  stocks$: Observable<Stock[]>;
 
   constructor(
     private stockService: StocksService
-  ) { }
+  ) {
+    this.stocks$ = this.stockService.getStocks();
+  }
 
   ngOnInit(): void {
-    this.stockService.getStocks().subscribe((stocks) => (this.stocks = stocks));
+    this.stocks$.subscribe((stocks) => (this.stocks = stocks));
   }
 
 }
