@@ -1,12 +1,13 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { HttpClientModule } from '@angular/common/http';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
 import { AssetsComponent } from './pages/assets/assets.component';
 import { DetailsComponent } from './pages/details/details.component';
-import { HttpClientModule } from '@angular/common/http';
+
 import { StockDetailsComponent } from './components/stock-details/stock-details.component';
 import { FollowStocksComponent } from './components/follow-stocks/follow-stocks.component';
 import { FollowStockPopupComponent } from './components/follow-stock-popup/follow-stock-popup.component';
