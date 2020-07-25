@@ -15,7 +15,7 @@ import { FollowStockPopupComponent } from './components/follow-stock-popup/follo
 import { BuySellPopupComponent } from './components/buy-sell-popup/buy-sell-popup.component';
 import { StockGraphComponent } from './components/stock-graph/stock-graph.component';
 import { TransactionGridComponent } from './components/transaction-grid/transaction-grid.component';
-import { FollowStocksItemComponent } from './components/follow-stocks-item/follow-stocks-item.component';
+import { SimpleTickerComponent } from './components/simple-ticker/simple-ticker.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +29,7 @@ import { FollowStocksItemComponent } from './components/follow-stocks-item/follo
     BuySellPopupComponent,
     StockGraphComponent,
     TransactionGridComponent,
-    FollowStocksItemComponent
+    SimpleTickerComponent
   ],
   imports: [
     BrowserModule,

@@ -7,7 +7,7 @@
                 <a (click)="unfollow(watched.symbol)"><span class="stock-list__btn stock-list__btn--remove">&ndash;</span></a>
             </div>
             <div class="stock-list__grid-cell">{{watched.symbol}}</div>
-            <div class="stock-list__grid-cell stock-list__grid-cell--txt-blue wide"><app-follow-stocks-item [symbol]="watched.symbol"></app-follow-stocks-item></div>
+            <div class="stock-list__grid-cell stock-list__grid-cell--txt-blue wide"><app-simple-ticker [symbol]="watched.symbol"></app-simple-ticker></div>
             <div class="stock-list__grid-cell">
                 <a (click)="buyPopup.show(watched.symbol)"><span class="btn-transaction btn-transaction--buy">buy</span></a>
             </div>

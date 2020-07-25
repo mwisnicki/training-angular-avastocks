@@ -1,13 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { Stock, StockTick, StockSymbol } from 'src/app/stock';
+import { StockTick, StockSymbol } from 'src/app/stock';
 import { StocksService } from 'src/app/stocks.service';
 
 @Component({
-  selector: 'app-follow-stocks-item',
-  templateUrl: './follow-stocks-item.component.html',
-  styleUrls: ['./follow-stocks-item.component.css'],
+  selector: 'app-simple-ticker',
+  template: `{{tick && tick.price | number:'1.3-3' }}`
 })
-export class FollowStocksItemComponent implements OnInit {
+export class SimpleTickerComponent implements OnInit {
   @Input() symbol: StockSymbol;
   tick: StockTick;
 
