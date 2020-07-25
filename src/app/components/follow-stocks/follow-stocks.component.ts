@@ -1,7 +1,13 @@
 import { Component, OnInit } from '@angular/core';
-import { StocksService, WatchlistEntry } from 'src/app/stocks.service';
+import {
+  StocksService,
+  WatchlistEntry,
+  Allocation,
+} from 'src/app/stocks.service';
 import { StockSymbol, Stock } from 'src/app/stock';
 import { groupBy1 } from 'src/app/utils';
+
+type WatchlistEntryWithAmount = WatchlistEntry & Allocation;
 
 @Component({
   selector: 'app-follow-stocks',
@@ -9,20 +15,23 @@ import { groupBy1 } from 'src/app/utils';
   styleUrls: ['./follow-stocks.component.css'],
 })
 export class FollowStocksComponent implements OnInit {
-  watchList: WatchlistEntry[];
-  allocations: { [key: string]: number }; // TODO I don't really like this
+  watchList: WatchlistEntryWithAmount[];
+  allocations: { [key: string]: number };
 
   constructor(private stockService: StocksService) {}
 
   ngOnInit(): void {
     this.stockService.getUserData().subscribe((ud) => {
       console.log('userData', ud);
-      this.watchList = ud.watchList;
       this.allocations = groupBy1(
         ud.allocations,
         (a) => a.symbol,
         (a) => a.amount
       );
+      this.watchList = ud.watchList.map((w) => ({
+        ...w,
+        amount: this.allocations[w.symbol],
+      }));
       console.log('allocations', this.allocations);
     });
   }
@@ -30,8 +39,9 @@ export class FollowStocksComponent implements OnInit {
   follow(symbol: StockSymbol) {
     console.log('follow stock', symbol);
     this.stockService.followStock(symbol).subscribe((ok) => {
+      const amount = this.allocations[symbol] || 0;
       // no prop change event when pushing to existing array!
-      this.watchList = this.watchList.concat([{ symbol }]);
+      this.watchList = this.watchList.concat([{ symbol, amount }]);
     });
   }
 
@@ -52,10 +62,11 @@ export class FollowStocksComponent implements OnInit {
 
   private addTransaction(symbol: StockSymbol, amount: number) {
     this.stockService.addTransaction(symbol, amount).subscribe(() => {
-      this.allocations[symbol] = Math.max(
-        0,
-        (this.allocations[symbol] || 0) + amount
-      );
+      const safeAmount = Math.max(0, (this.allocations[symbol] || 0) + amount);
+      this.allocations[symbol] = safeAmount;
+      this.watchList
+        .filter((w) => w.symbol == symbol)
+        .forEach((w) => (w.amount = safeAmount));
     });
   }
 }
