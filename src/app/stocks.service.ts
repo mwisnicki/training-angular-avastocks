@@ -44,7 +44,6 @@ export class StocksService {
     );
   }
 
-  
   unfollowStock(symbol: StockSymbol): Observable<any> {
     return this.http.post(
       `${this.apiBaseUrl}/userdata/watchlist`,
@@ -59,6 +58,18 @@ export class StocksService {
   getUserData(): Observable<UserData> {
     return this.http.get<UserData>(
       this.apiBaseUrl + '/userdata',
+      this.httpOptions
+    );
+  }
+
+  addTransaction(symbol: StockSymbol, amount: number) {
+    return this.http.post<TransactionRequest>(
+      `${this.apiBaseUrl}/transactions`,
+      {
+        symbol,
+        amount: Math.abs(amount),
+        side: amount >= 0 ? 'BUY' : 'SELL',
+      },
       this.httpOptions
     );
   }
@@ -85,4 +96,10 @@ export interface Allocation {
 
 export interface WatchlistEntry {
   symbol: string;
+}
+
+export interface TransactionRequest {
+  symbol: StockSymbol;
+  side: 'BUY' | 'SELL';
+  amount: number;
 }
