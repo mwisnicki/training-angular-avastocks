@@ -36,15 +36,13 @@ export class StocksService implements OnDestroy {
   private nesClient = new Client(this.wsBaseUrl);
 
   constructor(private http: HttpClient) {
-    // {"type":"pub","path":"/livestream/STRK","message":{"stock":"STRK","price":1908.4335494529246,"date":"2020-07-25T08:27:45.131Z"}}
     this.initWebSocketClient();
   }
 
   initWebSocketClient() {
     const start = async () => {
-      console.log('connecting ws');
+      console.log('connecting websocket');
       await this.nesClient.connect();
-      //callback();
     };
     start();
   }
