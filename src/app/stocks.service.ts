@@ -1,6 +1,16 @@
-import { Injectable } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map, tap } from 'rxjs/operators';
+import { Injectable, OnDestroy } from '@angular/core';
+import { Observable, of, Subject, concat } from 'rxjs';
+import {
+  catchError,
+  map,
+  tap,
+  takeUntil,
+  finalize,
+  share,
+} from 'rxjs/operators';
+import { webSocket } from 'rxjs/webSocket';
+
+import { Client } from '@hapi/nes/lib/client';
 
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -9,9 +19,10 @@ import { Stock, StockTick, StockSymbol } from './stock';
 @Injectable({
   providedIn: 'root',
 })
-export class StocksService {
+export class StocksService implements OnDestroy {
   userId = 'marcin.wisnicki';
   apiBaseUrl = 'https://demomocktradingserver.azurewebsites.net';
+  wsBaseUrl = this.apiBaseUrl.replace(/^https:/, 'wss:');
 
   httpOptions = {
     headers: new HttpHeaders({
@@ -20,17 +31,57 @@ export class StocksService {
     }),
   };
 
-  constructor(private http: HttpClient) {}
+  private dispose$ = new Subject<void>();
+
+  private nesClient = new Client(this.wsBaseUrl);
+
+  constructor(private http: HttpClient) {
+    // {"type":"pub","path":"/livestream/STRK","message":{"stock":"STRK","price":1908.4335494529246,"date":"2020-07-25T08:27:45.131Z"}}
+    this.initWebSocketClient();
+  }
+
+  initWebSocketClient() {
+    const start = async () => {
+      console.log('connecting ws');
+      await this.nesClient.connect();
+      //callback();
+    };
+    start();
+  }
+
+  ngOnDestroy() {
+    const stop = async () => {
+      await this.nesClient.disconnect();
+    };
+    stop();
+    this.dispose$.next();
+    this.dispose$.complete();
+  }
 
   getStocks(): Observable<Stock[]> {
     return this.http.get<Stock[]>(this.apiBaseUrl + '/stocks');
   }
 
   getTick(symbol: StockSymbol): Observable<StockTick> {
-    // TODO replace with websocket
-    return this.http.get<StockTick>(
-      `${this.apiBaseUrl}/stocks/${symbol}/price`
+    const liveSubject = new Subject<StockTick>();
+
+    const path = `/livestream/${symbol}`;
+    const handler: Client.Handler = (msg, flags) => liveSubject.next(msg);
+
+    const live = liveSubject.pipe(
+      finalize(() => this.nesClient.unsubscribe(path, handler)),
+      share(),
+      takeUntil(this.dispose$)
     );
+
+    // TODO get from lastTick instead
+    const initial = this.http
+      .get<StockTick>(`${this.apiBaseUrl}/stocks/${symbol}/price`)
+      .pipe(takeUntil(live));
+
+    this.nesClient.subscribe(path, handler);
+
+    return concat(initial, live);
   }
 
   followStock(symbol: StockSymbol): Observable<any> {
