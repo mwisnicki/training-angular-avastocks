@@ -1,29 +1,20 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
 import { StockTick, StockSymbol } from 'src/app/stock';
 import { StocksService } from 'src/app/stocks.service';
-import { takeUntil } from 'rxjs/operators';
-import { DisposerSubject } from 'src/app/rxUtils';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-simple-ticker',
-  template: `{{ tick && tick.price | number: '1.3-3' }}`,
+  template: `<span *ngIf="tick$ | async as tick">{{ tick && tick.price | number: '1.3-3' }}</span>`,
 })
-export class SimpleTickerComponent implements OnInit, OnDestroy {
+export class SimpleTickerComponent implements OnInit {
   @Input() symbol: StockSymbol;
-  tick: StockTick;
 
-  private dispose$ = new DisposerSubject();
+  tick$: Observable<StockTick>;
 
   constructor(private stockService: StocksService) {}
 
   ngOnInit(): void {
-    this.stockService
-      .getTick(this.symbol)
-      .pipe(this.dispose$.own())
-      .subscribe((tick) => (this.tick = tick));
-  }
-
-  ngOnDestroy(): void {
-    this.dispose$.dispose();
+    this.tick$ = this.stockService.getTick(this.symbol);
   }
 }

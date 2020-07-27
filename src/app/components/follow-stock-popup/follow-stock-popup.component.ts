@@ -4,7 +4,6 @@ import {
   Input,
   OnChanges,
   OnDestroy,
-  OnInit,
   Output,
   SimpleChanges,
 } from '@angular/core';
@@ -15,14 +14,14 @@ import { Stock, StockSymbol } from 'src/app/stock';
 import { StocksService, WatchlistEntry } from 'src/app/stocks.service';
 
 import { groupBy1 } from 'src/app/utils';
-import { connected, DisposerSubject } from 'src/app/rxUtils';
+import { connected, DisposerSubject, bindTo } from 'src/app/rxUtils';
 
 @Component({
   selector: 'app-follow-stock-popup',
   templateUrl: './follow-stock-popup.component.html',
   styleUrls: ['./follow-stock-popup.component.css'],
 })
-export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
+export class FollowStockPopupComponent implements OnDestroy, OnChanges {
   @Input() visible = false;
 
   symbol: StockSymbol;
@@ -31,7 +30,7 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
 
   hasMore$: Observable<boolean>;
 
-  private dispose$ = new DisposerSubject();
+  dispose$ = new DisposerSubject();
 
   private watchlistBySymbolSubject$ = new Subject<{
     [key: string]: WatchlistEntry;
@@ -44,26 +43,18 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
   constructor(private stockService: StocksService) {
     this.stocks$ = combineLatest(
       this.stockService.getStocks().pipe(shareReplay(1)),
-      this.watchlistBySymbolSubject$.pipe(
-        this.dispose$.own(),
-        publishReplay(1),
-        connected()
-      )
+      this.watchlistBySymbolSubject$.pipe(this.dispose$.own(), publishReplay(1), connected())
     ).pipe(
       map(([allStocks, watchlistBySymbol]) =>
         allStocks.filter((s) => !(s.symbol in watchlistBySymbol))
       )
     );
+
     this.symbol$ = this.stocks$.pipe(
       map((stocks) => (stocks.length > 0 && stocks[0].symbol) || null),
+      bindTo(this, 'symbol')
     );
     this.hasMore$ = this.stocks$.pipe(map((stocks) => stocks.length > 0));
-  }
-
-  ngOnInit(): void {
-    this.symbol$
-      .pipe(takeUntil(this.dispose$))
-      .subscribe((symbol) => (this.symbol = symbol));
   }
 
   ngOnDestroy() {
@@ -73,9 +64,7 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     if (changes.watchlist && changes.watchlist.currentValue != undefined) {
       setTimeout(() => {
-        this.watchlistBySymbolSubject$.next(
-          groupBy1(this.watchlist, (w) => w.symbol)
-        );
+        this.watchlistBySymbolSubject$.next(groupBy1(this.watchlist, (w) => w.symbol));
       });
     }
   }

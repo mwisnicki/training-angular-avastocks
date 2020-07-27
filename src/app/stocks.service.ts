@@ -1,14 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, of, Subject, concat } from 'rxjs';
-import {
-  catchError,
-  map,
-  tap,
-  takeUntil,
-  finalize,
-  share,
-} from 'rxjs/operators';
-import { webSocket } from 'rxjs/webSocket';
+import { takeUntil, finalize, share } from 'rxjs/operators';
 
 import { Client } from '@hapi/nes/lib/client';
 
@@ -105,10 +97,7 @@ export class StocksService implements OnDestroy {
   }
 
   getUserData(): Observable<UserData> {
-    return this.http.get<UserData>(
-      this.apiBaseUrl + '/userdata',
-      this.httpOptions
-    );
+    return this.http.get<UserData>(this.apiBaseUrl + '/userdata', this.httpOptions);
   }
 
   addTransaction(symbol: StockSymbol, amount: number) {
