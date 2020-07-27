@@ -19,7 +19,7 @@ export class SimpleTickerComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.stockService
       .getTick(this.symbol)
-      .pipe(takeUntil(this.dispose$))
+      .pipe(this.dispose$.own())
       .subscribe((tick) => (this.tick = tick));
   }
 

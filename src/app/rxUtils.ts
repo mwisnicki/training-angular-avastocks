@@ -5,6 +5,7 @@ import {
   MonoTypeOperatorFunction,
   Subject,
 } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 /**
  * Automatically connect to observable.
@@ -34,5 +35,10 @@ export class DisposerSubject extends Subject<void> {
       this.next();
       this.complete();
     }
+  }
+
+  /** Return operator that will transfer ownership of subscription to this disposer */
+  own<UserData>(): MonoTypeOperatorFunction<UserData> {
+    return takeUntil(this);
   }
 }

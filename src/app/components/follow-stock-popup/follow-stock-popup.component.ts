@@ -45,7 +45,7 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
     this.stocks$ = combineLatest(
       this.stockService.getStocks().pipe(shareReplay(1)),
       this.watchlistBySymbolSubject$.pipe(
-        takeUntil(this.dispose$),
+        this.dispose$.own(),
         publishReplay(1),
         connected()
       )
@@ -55,7 +55,7 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
       )
     );
     this.symbol$ = this.stocks$.pipe(
-      map((stocks) => (stocks.length > 0 && stocks[0].symbol) || null)
+      map((stocks) => (stocks.length > 0 && stocks[0].symbol) || null),
     );
     this.hasMore$ = this.stocks$.pipe(map((stocks) => stocks.length > 0));
   }
