@@ -7,14 +7,14 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { Observable, combineLatest, Subject } from 'rxjs';
-import { map, shareReplay, publishReplay, takeUntil } from 'rxjs/operators';
+import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
+import { map, shareReplay } from 'rxjs/operators';
 
 import { Stock, StockSymbol } from 'src/app/stock';
 import { StocksService, WatchlistEntry } from 'src/app/stocks.service';
 
 import { groupBy1 } from 'src/app/utils';
-import { connected, DisposerSubject, bindTo } from 'src/app/rxUtils';
+import { DisposerSubject, bindTo } from 'src/app/rxUtils';
 
 @Component({
   selector: 'app-follow-stock-popup',
@@ -32,9 +32,7 @@ export class FollowStockPopupComponent implements OnDestroy, OnChanges {
 
   dispose$ = new DisposerSubject();
 
-  private watchlistBySymbolSubject$ = new Subject<{
-    [key: string]: WatchlistEntry;
-  }>();
+  private watchlistBySymbolSubject$ = new BehaviorSubject<Record<string, WatchlistEntry>>({});
 
   @Input() watchlist: WatchlistEntry[];
 
@@ -43,7 +41,7 @@ export class FollowStockPopupComponent implements OnDestroy, OnChanges {
   constructor(private stockService: StocksService) {
     this.stocks$ = combineLatest(
       this.stockService.getStocks().pipe(shareReplay(1)),
-      this.watchlistBySymbolSubject$.pipe(this.dispose$.own(), publishReplay(1), connected())
+      this.watchlistBySymbolSubject$
     ).pipe(
       map(([allStocks, watchlistBySymbol]) =>
         allStocks.filter((s) => !(s.symbol in watchlistBySymbol))
@@ -51,7 +49,12 @@ export class FollowStockPopupComponent implements OnDestroy, OnChanges {
     );
 
     this.symbol$ = this.stocks$.pipe(
-      map((stocks) => (stocks.length > 0 && stocks[0].symbol) || null),
+      map((stocks) => {
+        const current = stocks.find((s) => s.symbol == this.symbol);
+        if (current) return current.symbol;
+        if (stocks.length > 0) return stocks[0].symbol;
+        return null;
+      }),
       bindTo(this, 'symbol')
     );
     this.hasMore$ = this.stocks$.pipe(map((stocks) => stocks.length > 0));
