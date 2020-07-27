@@ -8,14 +8,14 @@ import {
   Output,
   SimpleChanges,
 } from '@angular/core';
-import { Observable, combineLatest, Subject, Subscription } from 'rxjs';
-import { map, shareReplay, publishReplay } from 'rxjs/operators';
+import { Observable, combineLatest, Subject } from 'rxjs';
+import { map, shareReplay, publishReplay, takeUntil } from 'rxjs/operators';
 
 import { Stock, StockSymbol } from 'src/app/stock';
 import { StocksService, WatchlistEntry } from 'src/app/stocks.service';
 
 import { groupBy1 } from 'src/app/utils';
-import { connected } from 'src/app/rxUtils';
+import { connected, DisposerSubject } from 'src/app/rxUtils';
 
 @Component({
   selector: 'app-follow-stock-popup',
@@ -31,7 +31,7 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
 
   hasMore$: Observable<boolean>;
 
-  private subscriptions = new Subscription();
+  private dispose$ = new DisposerSubject();
 
   private watchlistBySymbolSubject$ = new Subject<{
     [key: string]: WatchlistEntry;
@@ -45,8 +45,9 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
     this.stocks$ = combineLatest(
       this.stockService.getStocks().pipe(shareReplay(1)),
       this.watchlistBySymbolSubject$.pipe(
+        takeUntil(this.dispose$),
         publishReplay(1),
-        connected((s) => this.subscriptions.add(s))
+        connected()
       )
     ).pipe(
       map(([allStocks, watchlistBySymbol]) =>
@@ -60,13 +61,13 @@ export class FollowStockPopupComponent implements OnInit, OnDestroy, OnChanges {
   }
 
   ngOnInit(): void {
-    this.subscriptions.add(
-      this.symbol$.subscribe((symbol) => (this.symbol = symbol))
-    );
+    this.symbol$
+      .pipe(takeUntil(this.dispose$))
+      .subscribe((symbol) => (this.symbol = symbol));
   }
 
   ngOnDestroy() {
-    this.subscriptions.unsubscribe();
+    this.dispose$.dispose();
   }
 
   ngOnChanges(changes: SimpleChanges) {

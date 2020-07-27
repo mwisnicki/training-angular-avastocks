@@ -1,8 +1,8 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { StockTick, StockSymbol } from 'src/app/stock';
 import { StocksService } from 'src/app/stocks.service';
-import { Subject } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { DisposerSubject } from 'src/app/rxUtils';
 
 @Component({
   selector: 'app-simple-ticker',
@@ -12,7 +12,7 @@ export class SimpleTickerComponent implements OnInit, OnDestroy {
   @Input() symbol: StockSymbol;
   tick: StockTick;
 
-  private dispose$ = new Subject<void>();
+  private dispose$ = new DisposerSubject();
 
   constructor(private stockService: StocksService) {}
 
@@ -24,8 +24,6 @@ export class SimpleTickerComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.warn('ticker onDestroy', ...arguments);
-    this.dispose$.next();
-    this.dispose$.complete();
+    this.dispose$.dispose();
   }
 }
