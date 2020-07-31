@@ -6,6 +6,7 @@ import {
   OnDestroy,
   Output,
   SimpleChanges,
+  ViewChild,
 } from '@angular/core';
 import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
@@ -15,6 +16,7 @@ import { StocksService, WatchlistEntry } from 'src/app/stocks.service';
 
 import { groupBy1 } from 'src/app/utils';
 import { DisposerSubject, bindTo } from 'src/app/rxUtils';
+import { PopupComponent } from '../popup/popup.component';
 
 @Component({
   selector: 'app-follow-stock-popup',
@@ -22,7 +24,7 @@ import { DisposerSubject, bindTo } from 'src/app/rxUtils';
   styleUrls: ['./follow-stock-popup.component.css'],
 })
 export class FollowStockPopupComponent implements OnDestroy, OnChanges {
-  @Input() visible = false;
+  @ViewChild(PopupComponent) popup: PopupComponent;
 
   symbol: StockSymbol;
   symbol$: Observable<StockSymbol>;
@@ -72,8 +74,13 @@ export class FollowStockPopupComponent implements OnDestroy, OnChanges {
     }
   }
 
+  show() {
+    // how to avoid it without class inheritance?
+    this.popup.show();
+  }
+
   onAddClick() {
-    this.visible = false;
+    this.popup.hide();
     this.added.emit(this.symbol);
   }
 }

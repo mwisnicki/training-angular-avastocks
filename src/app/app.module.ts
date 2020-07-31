@@ -16,6 +16,7 @@ import { BuySellPopupComponent } from './components/buy-sell-popup/buy-sell-popu
 import { StockGraphComponent } from './components/stock-graph/stock-graph.component';
 import { TransactionGridComponent } from './components/transaction-grid/transaction-grid.component';
 import { SimpleTickerComponent } from './components/simple-ticker/simple-ticker.component';
+import { PopupComponent } from './components/popup/popup.component';
 
 @NgModule({
   declarations: [
@@ -29,7 +30,8 @@ import { SimpleTickerComponent } from './components/simple-ticker/simple-ticker.
     BuySellPopupComponent,
     StockGraphComponent,
     TransactionGridComponent,
-    SimpleTickerComponent
+    SimpleTickerComponent,
+    PopupComponent
   ],
   imports: [
     BrowserModule,

@@ -1,7 +1,8 @@
-import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
 import { Stock, StockSymbol } from 'src/app/stock';
 import { Observable } from 'rxjs';
 import { StocksService } from 'src/app/stocks.service';
+import { PopupComponent } from '../popup/popup.component';
 
 @Component({
   selector: 'app-buy-sell-popup',
@@ -9,7 +10,7 @@ import { StocksService } from 'src/app/stocks.service';
   styleUrls: ['./buy-sell-popup.component.css'],
 })
 export class BuySellPopupComponent implements OnInit {
-  visible = false;
+  @ViewChild(PopupComponent) popup: PopupComponent;
 
   @Input()
   operation: 'buy' | 'sell';
@@ -36,11 +37,11 @@ export class BuySellPopupComponent implements OnInit {
 
   show(symbol?: StockSymbol) {
     if (symbol) this.symbol = symbol;
-    this.visible = true;
+    this.popup.show();
   }
 
   onPerformClick() {
-    this.visible = false;
+    this.popup.hide();
     this.performed.emit(this);
   }
 }

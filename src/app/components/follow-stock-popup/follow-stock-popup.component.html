@@ -1,11 +1,7 @@
-<div class="modal visible" *ngIf="visible">
-    <div class="modal__overlay"></div>
-    <div class="modal__content">
-        <div class="modal__close" (click)="visible=false">x</div>
-        <h2 class="modal__h2">Select a new stock to follow</h2>
-        <select class="modal__dropdown" [(ngModel)]="symbol">
-            <option *ngFor="let stock of stocks$ | async" [ngValue]="stock.symbol">{{stock.name}}</option>
-        </select>
-        <button [disabled]="!symbol" class="modal__btn" (click)="onAddClick()">Add</button>
-    </div>
-</div>
+<app-popup>
+  <h2 class="modal__h2">Select a new stock to follow</h2>
+  <select class="modal__dropdown" [(ngModel)]="symbol">
+    <option *ngFor="let stock of stocks$ | async" [ngValue]="stock.symbol">{{ stock.name }}</option>
+  </select>
+  <button [disabled]="!symbol" class="modal__btn" (click)="onAddClick()">Add</button>
+</app-popup>

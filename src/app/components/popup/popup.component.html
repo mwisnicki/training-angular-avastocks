@@ -1,0 +1,7 @@
+<div class="modal modal__{{ operation }} visible" *ngIf="visible">
+  <div class="modal__overlay"></div>
+  <div class="modal__content modal__content--large">
+    <div class="modal__close" (click)="visible = false">x</div>
+    <ng-content></ng-content>
+  </div>
+</div>

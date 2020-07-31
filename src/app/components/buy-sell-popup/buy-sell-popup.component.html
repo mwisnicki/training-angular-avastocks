@@ -1,14 +1,19 @@
-<div class="modal modal__{{operation}} visible" *ngIf="visible">
-    <div class="modal__overlay"></div>
-    <div class="modal__content modal__content--large">
-        <div class="modal__close" (click)="visible=false">x</div>
-        <h2 class="modal__h2">{{label}} stock</h2>
-        <select class="modal__dropdown" [(ngModel)]="symbol">
-            <option *ngFor="let stock of stocks$ | async" [ngValue]="stock.symbol">{{stock.name}}</option>
-        </select>
+<app-popup>
+  <h2 class="modal__h2">{{ label }} stock</h2>
 
-        <input class="modal__number-box" type="number" name="quantity" placeholder="enter amount" [(ngModel)]="amount" />
+  <select class="modal__dropdown" [(ngModel)]="symbol">
+    <option *ngFor="let stock of stocks$ | async" [ngValue]="stock.symbol">{{ stock.name }}</option>
+  </select>
 
-        <button class="modal__btn" [disabled]="!(symbol && amount > 0)" (click)="onPerformClick()" >{{label}}</button>
-    </div>
-</div>
+  <input
+    class="modal__number-box"
+    type="number"
+    name="quantity"
+    placeholder="enter amount"
+    [(ngModel)]="amount"
+  />
+
+  <button class="modal__btn" [disabled]="!(symbol && amount > 0)" (click)="onPerformClick()">
+    {{ label }}
+  </button>
+</app-popup>

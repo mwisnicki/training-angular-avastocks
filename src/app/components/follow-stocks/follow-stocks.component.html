@@ -1,5 +1,5 @@
 <section class="stock-list">
-    <h2 class="stock-list__title">Stocks that I follow <a *ngIf="followPopup.hasMore$ | async" (click)="followPopup.visible=true"><span class="stock-list__btn stock-list__btn--add">+</span></a></h2>
+    <h2 class="stock-list__title">Stocks that I follow <a *ngIf="followPopup.hasMore$ | async" (click)="followPopup.show()"><span class="stock-list__btn stock-list__btn--add">+</span></a></h2>
     <app-follow-stock-popup #followPopup (added)="follow($event)" [watchlist]="watchList"></app-follow-stock-popup>
     <div class="stock-list__grid">
         <div class="stock-list__grid-row" *ngFor="let watched of watchList">
