@@ -3,9 +3,10 @@
 @import "~ag-grid-community/dist/styles/ag-theme-balham.css";
 */
 
-.mock {
+.TODO {
     border: 2px dashed yellow;
     background: lightyellow;
+    box-sizing: border-box;
 }
 
 html,
