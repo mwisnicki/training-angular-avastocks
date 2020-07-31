@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, of, Subject, concat } from 'rxjs';
-import { takeUntil, finalize, share } from 'rxjs/operators';
+import { takeUntil, finalize, share, retry } from 'rxjs/operators';
 
 import { Client } from '@hapi/nes/lib/client';
 
@@ -67,7 +67,7 @@ export class StocksService implements OnDestroy {
     // TODO get from lastTick instead
     const initial = this.http
       .get<StockTick>(`${this.apiBaseUrl}/stocks/${symbol}/price`)
-      .pipe(takeUntil(live));
+      .pipe(retry(3), takeUntil(live));
 
     this.nesClient.subscribe(path, handler);
 
