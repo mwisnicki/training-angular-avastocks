@@ -7,6 +7,7 @@
     "sourceMap": true,
     "declaration": false,
     "downlevelIteration": true,
+    // for some reason experimentalDecorators doesn't work and I had to enable it in VSCode settings
     "experimentalDecorators": true,
     "moduleResolution": "node",
     "importHelpers": true,
