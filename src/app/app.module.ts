@@ -18,6 +18,8 @@ import { TransactionGridComponent } from './components/transaction-grid/transact
 import { SimpleTickerComponent } from './components/simple-ticker/simple-ticker.component';
 import { PopupComponent } from './components/popup/popup.component';
 
+import { httpInterceptorProviders } from './auth-interceptor'
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -39,7 +41,7 @@ import { PopupComponent } from './components/popup/popup.component';
     AppRoutingModule,
     HttpClientModule
   ],
-  providers: [],
+  providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

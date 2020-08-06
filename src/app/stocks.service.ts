@@ -12,14 +12,12 @@ import { Stock, StockTick, StockSymbol } from './stock';
   providedIn: 'root',
 })
 export class StocksService implements OnDestroy {
-  userId = 'marcin.wisnicki';
   apiBaseUrl = 'https://demomocktradingserver.azurewebsites.net';
   wsBaseUrl = this.apiBaseUrl.replace(/^https:/, 'wss:');
 
   httpOptions = {
     headers: new HttpHeaders({
       'Content-Type': 'application/json',
-      userid: this.userId,
     }),
   };
 
@@ -67,12 +65,14 @@ export class StocksService implements OnDestroy {
       .pipe(retry(3));
 
     const live = liveSubject.pipe(
-      finalize(() => { this.nesClient.unsubscribe(path, handler) }),
+      finalize(() => {
+        this.nesClient.unsubscribe(path, handler);
+      })
     );
 
     // TODO broken - live will be closed by first takeUntil - perhaps swithMap or custom op?
     //return concat(initial.pipe(takeUntil(live)), live).pipe(share(), takeUntil(this.dispose$));
-    
+
     return concat(initial, live).pipe(share(), takeUntil(this.dispose$));
   }
 
