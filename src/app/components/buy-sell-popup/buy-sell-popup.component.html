@@ -1,7 +1,11 @@
 <app-popup>
   <h2 class="modal__h2">{{ label }} stock</h2>
 
-  <select class="modal__dropdown" [(ngModel)]="symbol">
+  <!--
+      TODO for now disabled selection since owned amount is not in sync.
+      Perhaps this should be removed completely since there is no requirement for dropdown here
+    -->
+  <select class="modal__dropdown" [(ngModel)]="symbol" disabled>
     <option *ngFor="let stock of stocks$ | async" [ngValue]="stock.symbol">{{ stock.name }}</option>
   </select>
 
@@ -10,6 +14,8 @@
     type="number"
     name="quantity"
     placeholder="enter amount"
+    min="0"
+    [max]="owned"
     [(ngModel)]="amount"
   />
 

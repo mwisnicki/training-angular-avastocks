@@ -1,3 +1,15 @@
-<section class="TODO stock-transactions full-width">
-  <p>TODO assets grid</p>
+<section class="stock-transactions full-width">
+  <ag-grid-angular
+    class="ag-theme-balham"
+    style="height: 500px;"
+    [rowData]="rowData$ | async"
+    [columnDefs]="columnDefs"
+    (gridReady)="onGridReady()"
+  >
+  </ag-grid-angular>
+  <app-buy-sell-popup
+    #sellPopup
+    operation="sell"
+    (performed)="sell(sellPopup.symbol, sellPopup.amount)"
+  ></app-buy-sell-popup>
 </section>

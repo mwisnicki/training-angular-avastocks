@@ -14,4 +14,4 @@
 </div>
 
 <app-buy-sell-popup #buyPopup operation="buy" (performed)="buy(buyPopup.symbol, buyPopup.amount)"></app-buy-sell-popup>
-<app-buy-sell-popup #sellPopup operation="sell" (performed)="sell(sellPopup.symbol, sellPopup.amount)"></app-buy-sell-popup>
+<app-buy-sell-popup #sellPopup operation="sell" [owned]="amount" (performed)="sell(sellPopup.symbol, sellPopup.amount)"></app-buy-sell-popup>

@@ -3,7 +3,9 @@
   "extends": "./tsconfig.base.json",
   "compilerOptions": {
     "outDir": "./out-tsc/app",
-    "types": []
+    "types": [],
+    // workaround until ag-grid 24.0.0 is released
+    "skipLibCheck": true
   },
   "files": [
     "src/main.ts",

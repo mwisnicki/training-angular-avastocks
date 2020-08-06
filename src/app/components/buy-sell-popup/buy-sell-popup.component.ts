@@ -19,6 +19,9 @@ export class BuySellPopupComponent implements OnInit {
 
   amount: number;
 
+  @Input()
+  owned?: number;
+
   symbol: StockSymbol;
   stocks$: Observable<Stock[]>;
 
@@ -35,13 +38,23 @@ export class BuySellPopupComponent implements OnInit {
     }[this.operation];
   }
 
-  show(symbol?: StockSymbol) {
+  show(symbol?: StockSymbol, owned?: number) {
     if (symbol) this.symbol = symbol;
+    this.amount = 0;
+    this.owned = owned;
     this.popup.show();
+  }
+
+  coerceValue() {
+    this.amount = Math.max(0, this.amount);
+    if (this.operation == 'sell' && typeof this.owned !== 'undefined') {
+      this.amount = Math.min(this.amount, this.owned);
+    }
   }
 
   onPerformClick() {
     this.popup.hide();
+    this.coerceValue();
     this.performed.emit(this);
   }
 }

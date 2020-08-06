@@ -3,10 +3,12 @@ import { NgModule } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 
+import { AgGridModule } from 'ag-grid-angular';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
-import { AssetsComponent } from './pages/assets/assets.component';
+import { AssetsComponent, AssetSellCellRenderer } from './pages/assets/assets.component';
 import { DetailsComponent } from './pages/details/details.component';
 
 import { StockDetailsComponent } from './components/stock-details/stock-details.component';
@@ -39,7 +41,8 @@ import { httpInterceptorProviders } from './auth-interceptor'
     BrowserModule,
     FormsModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    AgGridModule.withComponents([AssetSellCellRenderer])
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]
