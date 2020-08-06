@@ -34,7 +34,7 @@ export class StocksService implements OnDestroy {
       console.log('connecting websocket');
       await this.nesClient.connect();
     };
-    // FIXME this is not entirely correct - if we don't await it's possible client is not ready in handlers
+    // FIXME possible race. There's no clean solution to async init but angular#23279 has some workarounds
     start();
   }
 
