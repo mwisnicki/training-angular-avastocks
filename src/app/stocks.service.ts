@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { Observable, of, Subject, concat } from 'rxjs';
-import { takeUntil, finalize, share, retry } from 'rxjs/operators';
+import { takeUntil, finalize, share, retry, map } from 'rxjs/operators';
 
 import { Client } from '@hapi/nes/lib/client';
 
@@ -36,6 +36,7 @@ export class StocksService implements OnDestroy {
       console.log('connecting websocket');
       await this.nesClient.connect();
     };
+    // FIXME this is not entirely correct - if we don't await it's possible client is not ready in handlers
     start();
   }
 
@@ -56,22 +57,23 @@ export class StocksService implements OnDestroy {
     const liveSubject = new Subject<StockTick>();
 
     const path = `/livestream/${symbol}`;
-    const handler: Client.Handler = (msg, flags) => liveSubject.next(msg);
+    const handler: Client.Handler = (msg) => liveSubject.next(msg);
 
-    const live = liveSubject.pipe(
-      finalize(() => this.nesClient.unsubscribe(path, handler)),
-      share(),
-      takeUntil(this.dispose$)
-    );
+    this.nesClient.subscribe(path, handler);
 
     // TODO get from lastTick instead
     const initial = this.http
       .get<StockTick>(`${this.apiBaseUrl}/stocks/${symbol}/price`)
-      .pipe(retry(3), takeUntil(live));
+      .pipe(retry(3));
 
-    this.nesClient.subscribe(path, handler);
+    const live = liveSubject.pipe(
+      finalize(() => { this.nesClient.unsubscribe(path, handler) }),
+    );
 
-    return concat(initial, live);
+    // TODO broken - live will be closed by first takeUntil - perhaps swithMap or custom op?
+    //return concat(initial.pipe(takeUntil(live)), live).pipe(share(), takeUntil(this.dispose$));
+    
+    return concat(initial, live).pipe(share(), takeUntil(this.dispose$));
   }
 
   followStock(symbol: StockSymbol): Observable<any> {
@@ -98,6 +100,15 @@ export class StocksService implements OnDestroy {
 
   getUserData(): Observable<UserData> {
     return this.http.get<UserData>(this.apiBaseUrl + '/userdata', this.httpOptions);
+  }
+
+  // TODO cache allocations and update on transactions
+  getAllocations(): Observable<Allocation[]> {
+    return this.http.get<Allocation[]>(this.apiBaseUrl + '/userdata/allocations', this.httpOptions);
+  }
+
+  getAllocation(symbol: StockSymbol): Observable<Allocation> {
+    return this.getAllocations().pipe(map((as) => as.find((a) => a.symbol == symbol)));
   }
 
   addTransaction(symbol: StockSymbol, amount: number) {

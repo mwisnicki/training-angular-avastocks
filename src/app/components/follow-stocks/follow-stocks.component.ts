@@ -61,23 +61,4 @@ export class FollowStocksComponent implements OnInit, OnDestroy {
       this.watchList = this.watchList.filter((w) => w.symbol != symbol);
     });
   }
-
-  buy(symbol: StockSymbol, amount: number) {
-    console.log('buy', ...arguments);
-    this.addTransaction(symbol, amount);
-  }
-
-  sell(symbol: StockSymbol, amount: number) {
-    this.addTransaction(symbol, -amount);
-  }
-
-  private addTransaction(symbol: StockSymbol, amount: number) {
-    this.stockService.addTransaction(symbol, amount).subscribe(() => {
-      const safeAmount = Math.max(0, (this.allocations[symbol] || 0) + amount);
-      this.allocations[symbol] = safeAmount;
-      this.watchList
-        .filter((w) => w.symbol == symbol)
-        .forEach((w) => (w.amount = safeAmount));
-    });
-  }
 }
