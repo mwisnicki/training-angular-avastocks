@@ -1,7 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { StocksService } from 'src/app/stocks.service';
+import { UserService } from 'src/app/user.service';
 import { StockSymbol } from 'src/app/stock';
 import { AppComponent } from 'src/app/app.component';
+import { TransactionService } from 'src/app/transaction.service';
 
 @Component({
   selector: 'app-stock-details',
@@ -15,10 +16,14 @@ export class StockDetailsComponent implements OnInit {
 
   amount: number;
 
-  constructor(private stockService: StocksService, private app: AppComponent) {}
+  constructor(
+    private userService: UserService,
+    private transactionService: TransactionService,
+    private app: AppComponent
+  ) {}
 
   ngOnInit(): void {
-    this.stockService.getAllocation(this.symbol).subscribe((allocation) => {
+    this.userService.getAllocation(this.symbol).subscribe((allocation) => {
       this.amount = allocation?.amount;
     });
   }
@@ -38,7 +43,7 @@ export class StockDetailsComponent implements OnInit {
   }
 
   private addTransaction(symbol: StockSymbol, amount: number) {
-    this.stockService.addTransaction(symbol, amount).subscribe(() => {
+    this.transactionService.addTransaction(symbol, amount).subscribe(() => {
       const safeAmount = Math.max(0, (this.amount || 0) + amount);
       this.amount = safeAmount;
     });

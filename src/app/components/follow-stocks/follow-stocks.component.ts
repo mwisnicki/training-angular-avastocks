@@ -1,13 +1,9 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import {
-  StocksService,
-  WatchlistEntry,
-  Allocation,
-} from 'src/app/stocks.service';
-import { StockSymbol, Stock } from 'src/app/stock';
+
+import { StockSymbol } from 'src/app/stock';
 import { groupBy1 } from 'src/app/utils';
 import { DisposerSubject } from 'src/app/rxUtils';
-import { takeUntil } from 'rxjs/operators';
+import { UserService, WatchlistEntry, Allocation } from 'src/app/user.service';
 
 type WatchlistEntryWithAmount = WatchlistEntry & Allocation;
 
@@ -22,10 +18,10 @@ export class FollowStocksComponent implements OnInit, OnDestroy {
 
   private dispose$ = new DisposerSubject();
 
-  constructor(private stockService: StocksService) {}
+  constructor(private userService: UserService) {}
 
   ngOnInit(): void {
-    this.stockService
+    this.userService
       .getUserData()
       .pipe(this.dispose$.own())
       .subscribe((ud) => {
@@ -49,7 +45,7 @@ export class FollowStocksComponent implements OnInit, OnDestroy {
 
   follow(symbol: StockSymbol) {
     console.log('follow stock', symbol);
-    this.stockService.followStock(symbol).subscribe((ok) => {
+    this.userService.followStock(symbol).subscribe(() => {
       const amount = this.allocations[symbol] || 0;
       // no prop change event when pushing to existing array!
       this.watchList = this.watchList.concat([{ symbol, amount }]);
@@ -57,7 +53,7 @@ export class FollowStocksComponent implements OnInit, OnDestroy {
   }
 
   unfollow(symbol: StockSymbol) {
-    this.stockService.unfollowStock(symbol).subscribe((ok) => {
+    this.userService.unfollowStock(symbol).subscribe(() => {
       this.watchList = this.watchList.filter((w) => w.symbol != symbol);
     });
   }

@@ -1,12 +1,15 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { StocksService, Allocation } from 'src/app/stocks.service';
+import { formatCurrency } from '@angular/common';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { groupBy1 } from 'src/app/utils';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+
 import { StockSymbol } from 'src/app/stock';
+import { groupBy1 } from 'src/app/utils';
 import { BuySellPopupComponent } from 'src/app/components/buy-sell-popup/buy-sell-popup.component';
-import { formatCurrency } from '@angular/common';
+import { StocksService } from 'src/app/stocks.service';
+import { TransactionService } from 'src/app/transaction.service';
+import { UserService, Allocation } from 'src/app/user.service';
 
 const usdFormatter = ({ value }) => formatCurrency(value, 'en-US', '$');
 
@@ -45,7 +48,11 @@ export class AssetsComponent implements OnInit {
 
   rowData$: Observable<AssetRowData[]>;
 
-  constructor(private stockService: StocksService) {
+  constructor(
+    private stockService: StocksService,
+    private userService: UserService,
+    private transactionService: TransactionService
+  ) {
     this.rowData$ = this.fetchRowData();
   }
 
@@ -56,7 +63,7 @@ export class AssetsComponent implements OnInit {
   }
 
   private fetchRowData(): Observable<AssetRowData[]> {
-    return combineLatest([this.stockService.getAllocations(), this.stockService.getStocks()]).pipe(
+    return combineLatest([this.userService.getAllocations(), this.stockService.getStocks()]).pipe(
       map(([allocations, stocks]) => {
         const stockBySymbol = groupBy1(stocks, (s) => s.symbol);
         return allocations.map((a) => {
@@ -74,7 +81,7 @@ export class AssetsComponent implements OnInit {
   }
 
   sell(symbol, amount) {
-    this.stockService.addTransaction(symbol, -1 * amount).subscribe();
+    this.transactionService.addTransaction(symbol, -1 * amount).subscribe();
   }
 }
 
