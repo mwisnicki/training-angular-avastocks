@@ -104,9 +104,15 @@ export class StocksService implements OnDestroy {
     return this.http.get<UserData>(this.apiBaseUrl + '/userdata', this.httpOptions);
   }
 
+  fetchAllocations$ = new BehaviorSubject<void>(undefined);
+
   // TODO cache allocations and update on transactions
-  getAllocations(): Observable<Allocation[]> {
+  fetchAllocations(): Observable<Allocation[]> {
     return this.http.get<Allocation[]>(this.apiBaseUrl + '/userdata/allocations', this.httpOptions);
+  }
+
+  getAllocations(): Observable<Allocation[]> {
+    return this.fetchAllocations$.pipe(switchMap(() => this.fetchAllocations()));
   }
 
   getAllocation(symbol: StockSymbol): Observable<Allocation> {
@@ -116,21 +122,19 @@ export class StocksService implements OnDestroy {
   fetchTransactions$ = new BehaviorSubject<void>(undefined);
 
   addTransaction(symbol: StockSymbol, amount: number) {
+    const transaction = {
+      symbol,
+      amount: Math.abs(amount),
+      side: amount >= 0 ? 'BUY' : 'SELL',
+    };
     return this.http
-      .post<TransactionRequest>(
-        `${this.apiBaseUrl}/transactions`,
-        {
-          symbol,
-          amount: Math.abs(amount),
-          side: amount >= 0 ? 'BUY' : 'SELL',
-        },
-        this.httpOptions
-      )
+      .post<TransactionRequest>(`${this.apiBaseUrl}/transactions`, transaction, this.httpOptions)
       .pipe(
         tap({
           complete: () => {
             // TODO instead of invalidation we should just add new entry to cache. Needs price.
             this.fetchTransactions$.next();
+            this.fetchAllocations$.next();
           },
         })
       );

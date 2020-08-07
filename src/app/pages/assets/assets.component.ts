@@ -1,7 +1,7 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { StocksService, Allocation } from 'src/app/stocks.service';
-import { combineLatest, Observable, BehaviorSubject } from 'rxjs';
-import { map, switchMap } from 'rxjs/operators';
+import { combineLatest, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { groupBy1 } from 'src/app/utils';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { StockSymbol } from 'src/app/stock';
@@ -43,10 +43,11 @@ export class AssetsComponent implements OnInit {
     { headerName: 'Sell', cellRendererFramework: AssetSellCellRenderer },
   ];
 
-  private reload$ = new BehaviorSubject<void>(undefined);
-  rowData$ = this.reload$.pipe(switchMap(() => this.fetchRowData()));
+  rowData$: Observable<AssetRowData[]>;
 
-  constructor(private stockService: StocksService) {}
+  constructor(private stockService: StocksService) {
+    this.rowData$ = this.fetchRowData();
+  }
 
   ngOnInit(): void {}
 
@@ -73,7 +74,7 @@ export class AssetsComponent implements OnInit {
   }
 
   sell(symbol, amount) {
-    this.stockService.addTransaction(symbol, -1 * amount).subscribe(() => this.reload$.next());
+    this.stockService.addTransaction(symbol, -1 * amount).subscribe();
   }
 }
 
