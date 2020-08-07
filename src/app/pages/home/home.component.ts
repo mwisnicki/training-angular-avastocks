@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { StockSymbol } from 'src/app/stock';
+import { AppService } from 'src/app/app.service';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -6,7 +9,11 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./home.component.css'],
 })
 export class HomeComponent implements OnInit {
-  constructor() {}
+  selectedSymbol$: Observable<StockSymbol>;
+
+  constructor(private app: AppService) {
+    this.selectedSymbol$ = this.app.selectedSymbol$;
+  }
 
   ngOnInit(): void {}
 }

@@ -5,6 +5,8 @@ import { FormsModule } from '@angular/forms';
 
 import { AgGridModule } from 'ag-grid-angular';
 
+import { HighchartsChartModule } from 'highcharts-angular';
+
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
@@ -42,7 +44,8 @@ import { httpInterceptorProviders } from './auth-interceptor'
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    AgGridModule.withComponents([AssetSellCellRenderer])
+    AgGridModule.withComponents([AssetSellCellRenderer]),
+    HighchartsChartModule
   ],
   providers: [httpInterceptorProviders],
   bootstrap: [AppComponent]

@@ -1,3 +1,20 @@
-<section class="TODO stock-graph">
-  <p>TODO stock-graph</p>
+<section class="stock-graph">
+  <h2 class="stock-list__title">
+    Symbol: <i>{{ symbol }}</i> Period:
+    <select class="modal__dropdown" [(ngModel)]="period" (change)="onPeriodChanged()">
+      <option *ngFor="let p of periods" [ngValue]="p">{{ p }}</option>
+    </select>
+    <a class="stock-graph__link" routerLink="/details/{{ symbol }}" routerLinkActive="active" *ngIf="showDetailsButton == true">
+      details
+    </a>
+  </h2>
+  <!-- FIXME has fixed size 600x400 -->
+  <highcharts-chart
+    [Highcharts]="Highcharts"
+    [options]="chartOptions"
+    [callbackFunction]="chartCallback"
+    [(update)]="updateFlag"
+    class="stock-graph__container"
+  >
+  </highcharts-chart>
 </section>

@@ -1,5 +1,5 @@
-<section class="TODO stock-list">
-  <app-stock-details [symbol]="selectedSymbol"></app-stock-details>
+<section class="stock-list">
+  <app-stock-details [symbol]="selectedSymbol" showUnfollow="false" style="display: table-row;"></app-stock-details>
 </section>
-<app-stock-graph></app-stock-graph>
+<app-stock-graph [symbol]="selectedSymbol" showDetailsButton="false"></app-stock-graph>
 <app-transaction-grid [filterSymbol]="selectedSymbol"></app-transaction-grid>

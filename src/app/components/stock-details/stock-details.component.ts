@@ -3,6 +3,7 @@ import { UserService } from 'src/app/user.service';
 import { StockSymbol } from 'src/app/stock';
 import { AppComponent } from 'src/app/app.component';
 import { TransactionService } from 'src/app/transaction.service';
+import { AppService } from 'src/app/app.service';
 
 @Component({
   selector: 'app-stock-details',
@@ -11,6 +12,7 @@ import { TransactionService } from 'src/app/transaction.service';
 })
 export class StockDetailsComponent implements OnInit {
   @Input() symbol: StockSymbol;
+  @Input() showUnfollow: boolean = true;
 
   @Output() unfollow = new EventEmitter<StockSymbol>();
 
@@ -19,7 +21,7 @@ export class StockDetailsComponent implements OnInit {
   constructor(
     private userService: UserService,
     private transactionService: TransactionService,
-    private app: AppComponent
+    private app: AppService
   ) {}
 
   ngOnInit(): void {
@@ -29,8 +31,7 @@ export class StockDetailsComponent implements OnInit {
   }
 
   onSymbolClicked() {
-    // This should be stored in a service
-    this.app.selectedSymbol = this.symbol;
+    this.app.selectedSymbol$.next(this.symbol);
   }
 
   buy(symbol: StockSymbol, amount: number) {

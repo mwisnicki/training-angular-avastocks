@@ -6,6 +6,7 @@ import { Client } from '@hapi/nes/lib/client';
 
 import { API_BASE_URL, WS_URL, HTTP_OPTIONS } from './common';
 import { Stock, StockTick, StockSymbol } from './stock';
+import { ISODateString } from './transaction.service';
 
 @Injectable({
   providedIn: 'root',
@@ -69,4 +70,26 @@ export class StocksService implements OnDestroy {
 
     return concat(initial, live).pipe(share(), takeUntil(this.dispose$));
   }
+
+  /** Price per month and per day */
+  getPriceYearly(symbol: StockSymbol) {
+    return this.http.get<StockPriceHistory>(`${API_BASE_URL}/stocks/${symbol}/price/yearly`);
+  }
+
+  /** Price per hour and per 5min */
+  getPriceToday(symbol: StockSymbol) {
+    return this.http.get<StockPriceHistory>(`${API_BASE_URL}/stocks/${symbol}/price/today`);
+  }
+}
+
+export interface StockPricePoint {
+  date: ISODateString;
+  price: number;
+}
+
+export interface StockPriceHistory {
+  /** per month for yearly and per hour for today */
+  aggregated: StockPricePoint[];
+  /** per day for yearly and per 5 min for today */
+  detailed: StockPricePoint[];
 }
