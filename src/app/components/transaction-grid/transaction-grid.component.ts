@@ -73,8 +73,10 @@ export class TransactionGridComponent implements OnInit {
   }
 
   onGridReady() {
-    // FIXME it does not fit
-    //this.agGrid.api.sizeColumnsToFit();
+    this.agGrid.api.addEventListener('rowDataChanged', () => {
+      this.agGrid.api.sizeColumnsToFit();
+    });
+    this.agGrid.api.sizeColumnsToFit();
   }
 
   isTransactionVisible(tx: Transaction) {
