@@ -25,19 +25,13 @@ export class StocksService implements OnDestroy {
   }
 
   initWebSocketClient() {
-    const start = async () => {
-      console.log('connecting websocket');
-      await this.nesClient.connect();
-    };
-    // FIXME possible race. There's no clean solution to async init but angular#23279 has some workarounds
-    start();
+    console.log('connecting websocket');
+    // not awaiting connection is ok - requests are queued internally
+    this.nesClient.connect();
   }
 
   ngOnDestroy() {
-    const stop = async () => {
-      await this.nesClient.disconnect();
-    };
-    stop();
+    this.nesClient.disconnect();
     this.dispose$.next();
     this.dispose$.complete();
   }
