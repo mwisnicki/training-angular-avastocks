@@ -1,6 +1,6 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { Observable, of, Subject, concat } from 'rxjs';
-import { takeUntil, finalize, share, retry, map } from 'rxjs/operators';
+import { Observable, of, Subject, concat, BehaviorSubject } from 'rxjs';
+import { takeUntil, finalize, share, retry, map, tap, switchMap } from 'rxjs/operators';
 
 import { Client } from '@hapi/nes/lib/client';
 
@@ -20,6 +20,8 @@ export class StocksService implements OnDestroy {
       'Content-Type': 'application/json',
     }),
   };
+
+  // TODO add at least minimal caching (debounce)
 
   private dispose$ = new Subject<void>();
 
@@ -111,16 +113,35 @@ export class StocksService implements OnDestroy {
     return this.getAllocations().pipe(map((as) => as.find((a) => a.symbol == symbol)));
   }
 
+  fetchTransactions$ = new BehaviorSubject<void>(undefined);
+
   addTransaction(symbol: StockSymbol, amount: number) {
-    return this.http.post<TransactionRequest>(
-      `${this.apiBaseUrl}/transactions`,
-      {
-        symbol,
-        amount: Math.abs(amount),
-        side: amount >= 0 ? 'BUY' : 'SELL',
-      },
-      this.httpOptions
-    );
+    return this.http
+      .post<TransactionRequest>(
+        `${this.apiBaseUrl}/transactions`,
+        {
+          symbol,
+          amount: Math.abs(amount),
+          side: amount >= 0 ? 'BUY' : 'SELL',
+        },
+        this.httpOptions
+      )
+      .pipe(
+        tap({
+          complete: () => {
+            // TODO instead of invalidation we should just add new entry to cache. Needs price.
+            this.fetchTransactions$.next();
+          },
+        })
+      );
+  }
+
+  fetchTransactions() {
+    return this.http.get<Transaction[]>(`${this.apiBaseUrl}/transactions`, this.httpOptions);
+  }
+
+  getTransactions(): Observable<Transaction[]> {
+    return this.fetchTransactions$.pipe(switchMap(() => this.fetchTransactions()));
   }
 
   handleError<T>(op, result: T): (any) => Observable<T> {
@@ -147,8 +168,16 @@ export interface WatchlistEntry {
   symbol: string;
 }
 
-export interface TransactionRequest {
-  symbol: StockSymbol;
-  side: 'BUY' | 'SELL';
-  amount: number;
+export type TransactionSide = 'BUY' | 'SELL';
+
+export interface TransactionRequest extends Allocation {
+  side: TransactionSide;
+}
+
+export type ISODateString = string;
+
+export interface Transaction extends TransactionRequest {
+  tickPrice: number;
+  cost: number;
+  date: ISODateString;
 }
