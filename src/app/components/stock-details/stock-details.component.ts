@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 import { StocksService } from 'src/app/stocks.service';
 import { StockSymbol } from 'src/app/stock';
+import { AppComponent } from 'src/app/app.component';
 
 @Component({
   selector: 'app-stock-details',
@@ -8,18 +9,23 @@ import { StockSymbol } from 'src/app/stock';
   styleUrls: ['./stock-details.component.css'],
 })
 export class StockDetailsComponent implements OnInit {
-  @Input() symbol;
+  @Input() symbol: StockSymbol;
 
   @Output() unfollow = new EventEmitter<StockSymbol>();
 
   amount: number;
 
-  constructor(private stockService: StocksService) {}
+  constructor(private stockService: StocksService, private app: AppComponent) {}
 
   ngOnInit(): void {
     this.stockService.getAllocation(this.symbol).subscribe((allocation) => {
       this.amount = allocation?.amount;
     });
+  }
+
+  onSymbolClicked() {
+    // This should be stored in a service
+    this.app.selectedSymbol = this.symbol;
   }
 
   buy(symbol: StockSymbol, amount: number) {

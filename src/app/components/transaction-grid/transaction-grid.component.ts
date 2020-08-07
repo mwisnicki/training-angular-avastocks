@@ -9,7 +9,7 @@ import { StockSymbol } from 'src/app/stock';
 const dateFormatter = ({ value }) => formatDate(value, 'short', 'en-US');
 const usdFormatter = ({ value }) => formatCurrency(value, 'en-US', '$');
 
-const directionToClass = {
+const directionToCssClass = {
   BUY: 'stock-transactions__grid-cell-buy',
   SELL: 'stock-transactions__grid-cell-sell',
 };
@@ -33,9 +33,13 @@ export class TransactionGridComponent implements OnInit {
       valueFormatter: dateFormatter,
       sort: { direction: 'desc' },
     },
-    { headerName: 'Stock', field: 'symbol' },
+    { headerName: 'Stock', field: 'symbol', filter: true },
     { headerName: 'Amount', field: 'amount', type: 'numericColumn' },
-    { headerName: 'Direction', field: 'side', cellClass: ({ value }) => directionToClass[value] },
+    {
+      headerName: 'Direction',
+      field: 'side',
+      cellClass: ({ value }) => directionToCssClass[value],
+    },
     {
       headerName: 'Price',
       field: 'tickPrice',
@@ -50,7 +54,6 @@ export class TransactionGridComponent implements OnInit {
     },
   ];
 
-  // TODO implement that
   @Input()
   filterSymbol?: StockSymbol;
 
@@ -59,7 +62,9 @@ export class TransactionGridComponent implements OnInit {
 
   constructor(private stockService: StocksService) {
     const toRow = (tx: Transaction) => ({ ...tx, dateObject: new Date(tx.date) });
-    this.rowData$ = this.stockService.getTransactions().pipe(map((txs) => txs.map(toRow)));
+    const toRows = (txs: Transaction[]) =>
+      txs.filter((tx) => this.isTransactionVisible(tx)).map(toRow);
+    this.rowData$ = this.stockService.getTransactions().pipe(map(toRows));
   }
 
   ngOnInit(): void {
@@ -69,5 +74,10 @@ export class TransactionGridComponent implements OnInit {
   onGridReady() {
     // FIXME it does not fit
     //this.agGrid.api.sizeColumnsToFit();
+  }
+
+  isTransactionVisible(tx: Transaction) {
+    if (this.filterSymbol) return tx.symbol == this.filterSymbol;
+    return true;
   }
 }

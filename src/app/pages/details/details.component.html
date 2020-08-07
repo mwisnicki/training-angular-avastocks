@@ -2,4 +2,4 @@
   <app-stock-details [symbol]="selectedSymbol"></app-stock-details>
 </section>
 <app-stock-graph></app-stock-graph>
-<app-transaction-grid></app-transaction-grid>
+<app-transaction-grid [filterSymbol]="selectedSymbol"></app-transaction-grid>

@@ -1,21 +1,14 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { StocksService, Allocation } from 'src/app/stocks.service';
-import { combineLatest, Observable, Subject, BehaviorSubject } from 'rxjs';
-import { map, switchMap, tap } from 'rxjs/operators';
+import { combineLatest, Observable, BehaviorSubject } from 'rxjs';
+import { map, switchMap } from 'rxjs/operators';
 import { groupBy1 } from 'src/app/utils';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 import { StockSymbol } from 'src/app/stock';
 import { BuySellPopupComponent } from 'src/app/components/buy-sell-popup/buy-sell-popup.component';
+import { formatCurrency } from '@angular/common';
 
-const usdFormat = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-  minimumFractionDigits: 2,
-});
-
-function formatCurrency({ value }) {
-  return usdFormat.format(value);
-}
+const usdFormatter = ({ value }) => formatCurrency(value, 'en-US', '$');
 
 interface AssetRowData extends Allocation {
   price: number;
@@ -39,13 +32,13 @@ export class AssetsComponent implements OnInit {
       headerName: 'Current Price',
       field: 'price',
       type: 'numericColumn',
-      valueFormatter: formatCurrency,
+      valueFormatter: usdFormatter,
     },
     {
       headerName: 'Total',
       field: 'total',
       type: 'numericColumn',
-      valueFormatter: formatCurrency,
+      valueFormatter: usdFormatter,
     },
     { headerName: 'Sell', cellRendererFramework: AssetSellCellRenderer },
   ];
