@@ -37,6 +37,7 @@ export class FollowStockPopupComponent implements OnDestroy, OnChanges {
 
   private watchlistBySymbolSubject$ = new BehaviorSubject<Record<string, WatchlistEntry>>({});
 
+  // TODO watchlist should come from service rather than binding
   @Input() watchlist: WatchlistEntry[];
 
   @Output() added = new EventEmitter<StockSymbol>();
