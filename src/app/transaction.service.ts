@@ -13,7 +13,11 @@ import { Allocation } from './user.service';
 export class TransactionService {
   private httpOptions = HTTP_OPTIONS;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) {
+    this.transactions$ = this.http
+      .get<Transaction[]>(`${API_BASE_URL}/transactions`, this.httpOptions)
+      .pipe(share());
+  }
 
   fetchTransactions$ = new BehaviorSubject<void>(undefined);
 
@@ -35,9 +39,7 @@ export class TransactionService {
       );
   }
 
-  transactions$ = this.http
-    .get<Transaction[]>(`${API_BASE_URL}/transactions`, this.httpOptions)
-    .pipe(share());
+  transactions$: Observable<Transaction[]>;
 
   getTransactions(): Observable<Transaction[]> {
     return this.fetchTransactions$.pipe(switchMap(() => this.transactions$));

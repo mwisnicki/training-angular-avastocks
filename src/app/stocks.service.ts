@@ -22,6 +22,7 @@ export class StocksService implements OnDestroy {
 
   constructor(private http: HttpClient) {
     this.initWebSocketClient();
+    this.stocks$ = this.http.get<Stock[]>(`${API_BASE_URL}/stocks`).pipe(share());
   }
 
   initWebSocketClient() {
@@ -38,9 +39,7 @@ export class StocksService implements OnDestroy {
 
   // no sharing: 15 req
   // share(): 2 req (FollowStockPopup.symbol$, BuySellPopupComponent <option>)
-
-  // XXX whoa how does this even work? Seems like dependecies are injected before constructor?
-  stocks$ = this.http.get<Stock[]>(`${API_BASE_URL}/stocks`).pipe(share());
+  stocks$: Observable<Stock[]>;
 
   getStocks(): Observable<Stock[]> {
     return this.stocks$;

@@ -14,6 +14,12 @@ export class UserService {
   private httpOptions = HTTP_OPTIONS;
 
   constructor(private http: HttpClient, private transactionService: TransactionService) {
+    this.userData$ = this.http
+      .get<UserData>(`${API_BASE_URL}/userdata`, this.httpOptions)
+      .pipe(share());
+    this.allocations$ = this.http
+      .get<Allocation[]>(`${API_BASE_URL}/userdata/allocations`, this.httpOptions)
+      .pipe(share());
     this.transactionService.fetchTransactions$.subscribe(() => this.fetchAllocations$.next());
   }
 
@@ -39,7 +45,7 @@ export class UserService {
     );
   }
 
-  userData$ = this.http.get<UserData>(`${API_BASE_URL}/userdata`, this.httpOptions).pipe(share());
+  userData$: Observable<UserData>;
 
   getUserData(): Observable<UserData> {
     return this.userData$;
@@ -48,9 +54,7 @@ export class UserService {
   fetchAllocations$ = new BehaviorSubject<void>(undefined);
 
   // TODO cache allocations and update on transactions
-  allocations$ = this.http
-    .get<Allocation[]>(`${API_BASE_URL}/userdata/allocations`, this.httpOptions)
-    .pipe(share());
+  allocations$: Observable<Allocation[]>;
 
   getAllocations(): Observable<Allocation[]> {
     return this.fetchAllocations$.pipe(switchMap(() => this.allocations$));
