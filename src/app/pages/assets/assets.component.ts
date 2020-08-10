@@ -82,7 +82,7 @@ export class AssetsComponent implements OnInit {
   }
 
   sell(symbol, amount) {
-    this.transactionService.addTransaction(symbol, -1 * amount).subscribe();
+    this.transactionService.addTransaction(symbol, amount, 'SELL').subscribe();
   }
 }
 
