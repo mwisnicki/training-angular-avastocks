@@ -36,8 +36,12 @@ export class StocksService implements OnDestroy {
     this.dispose$.complete();
   }
 
+  // no sharing: 15 req
+  // share(): 2 req (FollowStockPopup.symbol$, BuySellPopupComponent <option>)
+  stocks$ = this.http.get<Stock[]>(`${API_BASE_URL}/stocks`).pipe(share());
+
   getStocks(): Observable<Stock[]> {
-    return this.http.get<Stock[]>(`${API_BASE_URL}/stocks`);
+    return this.stocks$;
   }
 
   getTick(symbol: StockSymbol): Observable<StockTick> {

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { switchMap, map } from 'rxjs/operators';
+import { switchMap, map, share } from 'rxjs/operators';
 
 import { API_BASE_URL, HTTP_OPTIONS } from './common';
 import { StockSymbol } from './stock';
@@ -39,19 +39,21 @@ export class UserService {
     );
   }
 
+  userData$ = this.http.get<UserData>(`${API_BASE_URL}/userdata`, this.httpOptions).pipe(share());
+
   getUserData(): Observable<UserData> {
-    return this.http.get<UserData>(`${API_BASE_URL}/userdata`, this.httpOptions);
+    return this.userData$;
   }
 
   fetchAllocations$ = new BehaviorSubject<void>(undefined);
 
   // TODO cache allocations and update on transactions
-  fetchAllocations(): Observable<Allocation[]> {
-    return this.http.get<Allocation[]>(`${API_BASE_URL}/userdata/allocations`, this.httpOptions);
-  }
+  allocations$ = this.http
+    .get<Allocation[]>(`${API_BASE_URL}/userdata/allocations`, this.httpOptions)
+    .pipe(share());
 
   getAllocations(): Observable<Allocation[]> {
-    return this.fetchAllocations$.pipe(switchMap(() => this.fetchAllocations()));
+    return this.fetchAllocations$.pipe(switchMap(() => this.allocations$));
   }
 
   getAllocation(symbol: StockSymbol): Observable<Allocation> {

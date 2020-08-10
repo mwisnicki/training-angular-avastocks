@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { tap, switchMap } from 'rxjs/operators';
+import { tap, switchMap, share } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
 import { API_BASE_URL, HTTP_OPTIONS } from './common';
@@ -28,19 +28,19 @@ export class TransactionService {
       .pipe(
         tap({
           complete: () => {
-            // TODO instead of invalidation we should just add new entry to cache. Needs price.
+            // TODO instead of invalidation we should just add new entry to cache - POST response has it
             this.fetchTransactions$.next();
           },
         })
       );
   }
 
-  fetchTransactions() {
-    return this.http.get<Transaction[]>(`${API_BASE_URL}/transactions`, this.httpOptions);
-  }
+  transactions$ = this.http
+    .get<Transaction[]>(`${API_BASE_URL}/transactions`, this.httpOptions)
+    .pipe(share());
 
   getTransactions(): Observable<Transaction[]> {
-    return this.fetchTransactions$.pipe(switchMap(() => this.fetchTransactions()));
+    return this.fetchTransactions$.pipe(switchMap(() => this.transactions$));
   }
 }
 
