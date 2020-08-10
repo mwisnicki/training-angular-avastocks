@@ -3,9 +3,9 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { tap, switchMap, share } from 'rxjs/operators';
 import { HttpClient } from '@angular/common/http';
 
-import { API_BASE_URL, HTTP_OPTIONS } from './common';
-import { StockSymbol } from './stock';
-import { Allocation } from './user.service';
+import { API_BASE_URL, HTTP_OPTIONS } from '../common';
+import { StockSymbol } from '../models/stock';
+import { Transaction, TransactionRequest } from '../models/transaction';
 
 @Injectable({
   providedIn: 'root',
@@ -44,18 +44,4 @@ export class TransactionService {
   getTransactions(): Observable<Transaction[]> {
     return this.fetchTransactions$.pipe(switchMap(() => this.transactions$));
   }
-}
-
-export type TransactionSide = 'BUY' | 'SELL';
-
-export interface TransactionRequest extends Allocation {
-  side: TransactionSide;
-}
-
-export type ISODateString = string;
-
-export interface Transaction extends TransactionRequest {
-  tickPrice: number;
-  cost: number;
-  date: ISODateString;
 }

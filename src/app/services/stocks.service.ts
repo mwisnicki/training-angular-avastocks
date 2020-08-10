@@ -1,12 +1,11 @@
 import { Injectable, OnDestroy } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of, Subject, concat } from 'rxjs';
+import { Observable, Subject, concat } from 'rxjs';
 import { takeUntil, finalize, share, retry } from 'rxjs/operators';
 import { Client } from '@hapi/nes/lib/client';
 
-import { API_BASE_URL, WS_URL, HTTP_OPTIONS } from './common';
-import { Stock, StockTick, StockSymbol } from './stock';
-import { ISODateString } from './transaction.service';
+import { API_BASE_URL, WS_URL, HTTP_OPTIONS } from '../common';
+import { Stock, StockTick, StockSymbol, StockPriceHistory } from '../models/stock';
 
 @Injectable({
   providedIn: 'root',
@@ -79,16 +78,4 @@ export class StocksService implements OnDestroy {
   getPriceToday(symbol: StockSymbol) {
     return this.http.get<StockPriceHistory>(`${API_BASE_URL}/stocks/${symbol}/price/today`);
   }
-}
-
-export interface StockPricePoint {
-  date: ISODateString;
-  price: number;
-}
-
-export interface StockPriceHistory {
-  /** per month for yearly and per hour for today */
-  aggregated: StockPricePoint[];
-  /** per day for yearly and per 5 min for today */
-  detailed: StockPricePoint[];
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { StockSymbol } from 'src/app/stock';
-import { AppService } from 'src/app/app.service';
+import { StockSymbol } from 'src/app/models/stock';
+import { AppService } from 'src/app/services/app.service';
 import { Observable } from 'rxjs';
 
 @Component({

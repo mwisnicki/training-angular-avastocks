@@ -1,9 +1,10 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 
-import { StockSymbol } from 'src/app/stock';
+import { StockSymbol } from 'src/app/models/stock';
 import { groupBy1 } from 'src/app/utils';
 import { DisposerSubject } from 'src/app/rxUtils';
-import { UserService, WatchlistEntry, Allocation } from 'src/app/user.service';
+import { WatchlistEntry, Allocation } from 'src/app/models/user';
+import { UserService } from 'src/app/services/user.service';
 
 type WatchlistEntryWithAmount = WatchlistEntry & Allocation;
 

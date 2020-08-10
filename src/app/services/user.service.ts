@@ -3,8 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { switchMap, map, share } from 'rxjs/operators';
 
-import { API_BASE_URL, HTTP_OPTIONS } from './common';
-import { StockSymbol } from './stock';
+import { API_BASE_URL, HTTP_OPTIONS } from '../common';
+import { StockSymbol } from '../models/stock';
+import { Allocation, UserData } from '../models/user';
 import { TransactionService } from './transaction.service';
 
 @Injectable({
@@ -63,20 +64,4 @@ export class UserService {
   getAllocation(symbol: StockSymbol): Observable<Allocation> {
     return this.getAllocations().pipe(map((as) => as.find((a) => a.symbol == symbol)));
   }
-}
-
-export interface UserData {
-  userId: string;
-  liquidity: number;
-  allocations: Allocation[];
-  watchList: WatchlistEntry[];
-}
-
-export interface Allocation {
-  symbol: string;
-  amount: number;
-}
-
-export interface WatchlistEntry {
-  symbol: string;
 }

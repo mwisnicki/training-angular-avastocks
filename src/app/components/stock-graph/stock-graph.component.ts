@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, OnChanges, SimpleChanges } from '@angular/core';
 import * as Highcharts from 'highcharts';
-import { StockSymbol } from 'src/app/stock';
-import { StocksService } from 'src/app/stocks.service';
+import { StockSymbol } from 'src/app/models/stock';
+import { StocksService } from 'src/app/services/stocks.service';
 
 const PERIODS = ['today', 'yearly'] as const;
 

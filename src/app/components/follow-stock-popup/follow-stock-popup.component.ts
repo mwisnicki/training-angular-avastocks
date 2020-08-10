@@ -11,13 +11,13 @@ import {
 import { Observable, combineLatest, BehaviorSubject } from 'rxjs';
 import { map, shareReplay } from 'rxjs/operators';
 
-import { Stock, StockSymbol } from 'src/app/stock';
-import { StocksService } from 'src/app/stocks.service';
+import { Stock, StockSymbol } from 'src/app/models/stock';
+import { StocksService } from 'src/app/services/stocks.service';
 
 import { groupBy1 } from 'src/app/utils';
 import { DisposerSubject, bindTo } from 'src/app/rxUtils';
 import { PopupComponent } from '../popup/popup.component';
-import { WatchlistEntry } from 'src/app/user.service';
+import { WatchlistEntry } from 'src/app/models/user';
 
 @Component({
   selector: 'app-follow-stock-popup',

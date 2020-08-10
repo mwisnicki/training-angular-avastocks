@@ -1,7 +1,7 @@
 import { Component, OnInit, Input, Output, EventEmitter, ViewChild } from '@angular/core';
-import { Stock, StockSymbol } from 'src/app/stock';
+import { Stock, StockSymbol } from 'src/app/models/stock';
 import { Observable } from 'rxjs';
-import { StocksService } from 'src/app/stocks.service';
+import { StocksService } from 'src/app/services/stocks.service';
 import { PopupComponent } from '../popup/popup.component';
 
 @Component({

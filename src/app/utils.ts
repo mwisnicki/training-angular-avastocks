@@ -1,3 +1,5 @@
+export type ISODateString = string;
+
 export function groupBy1<K extends string | number, V, T>(
   array: V[],
   groupingFn: (value: V) => K,

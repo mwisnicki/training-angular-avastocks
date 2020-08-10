@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { StockTick, StockSymbol } from 'src/app/stock';
-import { StocksService } from 'src/app/stocks.service';
+import { StockTick, StockSymbol } from 'src/app/models/stock';
+import { StocksService } from 'src/app/services/stocks.service';
 import { Observable } from 'rxjs';
 
 @Component({

@@ -4,12 +4,13 @@ import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
 
-import { StockSymbol } from 'src/app/stock';
+import { StockSymbol } from 'src/app/models/stock';
 import { groupBy1 } from 'src/app/utils';
 import { BuySellPopupComponent } from 'src/app/components/buy-sell-popup/buy-sell-popup.component';
-import { StocksService } from 'src/app/stocks.service';
-import { TransactionService } from 'src/app/transaction.service';
-import { UserService, Allocation } from 'src/app/user.service';
+import { StocksService } from 'src/app/services/stocks.service';
+import { TransactionService } from 'src/app/services/transaction.service';
+import { UserService } from 'src/app/services/user.service';
+import { Allocation } from 'src/app/models/user';
 
 const usdFormatter = ({ value }) => formatCurrency(value, 'en-US', '$');
 

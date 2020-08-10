@@ -4,8 +4,9 @@ import { AgGridAngular } from 'ag-grid-angular';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
-import { StockSymbol } from 'src/app/stock';
-import { Transaction, TransactionService } from 'src/app/transaction.service';
+import { StockSymbol } from 'src/app/models/stock';
+import { TransactionService } from 'src/app/services/transaction.service';
+import { Transaction } from 'src/app/models/transaction';
 
 const dateFormatter = ({ value }) => formatDate(value, 'short', 'en-US');
 const usdFormatter = ({ value }) => formatCurrency(value, 'en-US', '$');

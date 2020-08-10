@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
-import { StockSymbol } from './stock';
-import { AppService } from './app.service';
+import { StockSymbol } from './models/stock';
+import { AppService } from './services/app.service';
 
 @Component({
   selector: 'app-root',

@@ -1,9 +1,8 @@
 import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
-import { UserService } from 'src/app/user.service';
-import { StockSymbol } from 'src/app/stock';
-import { AppComponent } from 'src/app/app.component';
-import { TransactionService } from 'src/app/transaction.service';
-import { AppService } from 'src/app/app.service';
+import { UserService } from 'src/app/services/user.service';
+import { StockSymbol } from 'src/app/models/stock';
+import { TransactionService } from 'src/app/services/transaction.service';
+import { AppService } from 'src/app/services/app.service';
 
 @Component({
   selector: 'app-stock-details',
