@@ -10,7 +10,7 @@ import { HighchartsChartModule } from 'highcharts-angular';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { HomeComponent } from './pages/home/home.component';
-import { AssetsComponent, AssetSellCellRenderer } from './pages/assets/assets.component';
+import { AssetsComponent } from './pages/assets/assets.component';
 import { DetailsComponent } from './pages/details/details.component';
 
 import { StockDetailsComponent } from './components/stock-details/stock-details.component';
@@ -22,6 +22,7 @@ import { TransactionGridComponent } from './components/transaction-grid/transact
 import { SimpleTickerComponent } from './components/simple-ticker/simple-ticker.component';
 import { PopupComponent } from './components/popup/popup.component';
 
+import { TemplatedCellRenderer, AppAgGridCellRenderer } from './agGridUtils'
 import { httpInterceptorProviders } from './auth-interceptor'
 
 @NgModule({
@@ -29,6 +30,7 @@ import { httpInterceptorProviders } from './auth-interceptor'
     AppComponent,
     HomeComponent,
     AssetsComponent,
+    TemplatedCellRenderer,
     DetailsComponent,
     StockDetailsComponent,
     FollowStocksComponent,
@@ -38,7 +40,7 @@ import { httpInterceptorProviders } from './auth-interceptor'
     TransactionGridComponent,
     SimpleTickerComponent,
     PopupComponent,
-    AssetSellCellRenderer
+    AppAgGridCellRenderer,
   ],
   imports: [
     BrowserModule,

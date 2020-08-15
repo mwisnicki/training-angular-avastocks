@@ -2,15 +2,14 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { formatCurrency } from '@angular/common';
 import { combineLatest, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { AgGridAngular, ICellRendererAngularComp } from 'ag-grid-angular';
+import { AgGridAngular } from 'ag-grid-angular';
 
-import { StockSymbol } from 'src/app/models/stock';
 import { groupBy1 } from 'src/app/utils';
-import { BuySellPopupComponent } from 'src/app/components/buy-sell-popup/buy-sell-popup.component';
 import { StocksService } from 'src/app/services/stocks.service';
 import { TransactionService } from 'src/app/services/transaction.service';
 import { UserService } from 'src/app/services/user.service';
 import { Allocation } from 'src/app/models/user';
+
 
 const usdFormatter = ({ value }) => formatCurrency(value, 'en-US', '$');
 
@@ -27,8 +26,6 @@ interface AssetRowData extends Allocation {
 export class AssetsComponent implements OnInit {
   @ViewChild(AgGridAngular) agGrid: AgGridAngular;
 
-  @ViewChild('sellPopup') sellPopup: BuySellPopupComponent;
-
   columnDefs = [
     { headerName: 'Stock', field: 'symbol' },
     { headerName: 'Amount', field: 'amount', type: 'numericColumn' },
@@ -44,7 +41,10 @@ export class AssetsComponent implements OnInit {
       type: 'numericColumn',
       valueFormatter: usdFormatter,
     },
-    { headerName: 'Sell', cellRendererFramework: AssetSellCellRenderer },
+    {
+      headerName: 'Sell',
+      cellRenderer: 'sellButtonRenderer',
+    },
   ];
 
   rowData$: Observable<AssetRowData[]>;
@@ -83,31 +83,5 @@ export class AssetsComponent implements OnInit {
 
   sell(symbol, amount) {
     this.transactionService.addTransaction(symbol, amount, 'SELL').subscribe();
-  }
-}
-
-@Component({
-  selector: 'app-assets-sell-cell',
-  template: `<div *ngIf="amount > 0" class="stock-list__grid-cell">
-    <a (click)="askSell()"><span class="btn-transaction btn-transaction--sell">sell</span></a>
-  </div>`,
-})
-export class AssetSellCellRenderer implements ICellRendererAngularComp {
-  symbol: StockSymbol;
-  amount: number;
-
-  constructor(private parent: AssetsComponent) {}
-
-  agInit(params: { data: AssetRowData }): void {
-    this.symbol = params.data.symbol;
-    this.amount = params.data.amount;
-  }
-
-  refresh(): boolean {
-    return false;
-  }
-
-  askSell() {
-    this.parent.sellPopup.show(this.symbol, this.amount);
   }
 }
