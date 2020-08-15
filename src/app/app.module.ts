@@ -37,14 +37,15 @@ import { httpInterceptorProviders } from './auth-interceptor'
     StockGraphComponent,
     TransactionGridComponent,
     SimpleTickerComponent,
-    PopupComponent
+    PopupComponent,
+    AssetSellCellRenderer
   ],
   imports: [
     BrowserModule,
     FormsModule,
     AppRoutingModule,
     HttpClientModule,
-    AgGridModule.withComponents([AssetSellCellRenderer]),
+    AgGridModule.withComponents([]),
     HighchartsChartModule
   ],
   providers: [httpInterceptorProviders],

@@ -88,8 +88,7 @@ export class AssetsComponent implements OnInit {
 
 @Component({
   selector: 'app-assets-sell-cell',
-  // TODO *ngIf="amount > 0" in cell template does not work
-  template: `<div class="stock-list__grid-cell">
+  template: `<div *ngIf="amount > 0" class="stock-list__grid-cell">
     <a (click)="askSell()"><span class="btn-transaction btn-transaction--sell">sell</span></a>
   </div>`,
 })
